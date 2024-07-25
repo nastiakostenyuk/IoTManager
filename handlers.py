@@ -31,9 +31,9 @@ class DeviceHandler:
 
     async def create(self, request: Request) -> Response:
         """Create new device."""
-        data = await request.json()  # request in json formate
+        data = await request.json()
         try:
-            # validate data using pydantic model
+            # Validate data using pydantic model
             DeviceModel(**data)
             device = self.device_table.create(**data)
             return web.json_response({"id": device.id}, status=201)
@@ -41,6 +41,30 @@ class DeviceHandler:
             return web.json_response({'errors': e.errors()}, status=400)
         except IntegrityError as e:
             return web.json_response({'errors': str(e)}, status=400)
+        except Exception as exp:
+            logger.exception(f"An unexpected error occurred: {exp}")
+            return web.json_response({'error': 'Internal server error'}, status=500)
+
+    async def update(self, request: Request) -> Response:
+        """Update device by id."""
+        device_id = int(request.match_info.get('id', -1))
+        data = await request.json()
+
+        try:
+            # Validate data using pydantic model
+            DeviceModel(**data)
+
+            device = self.device_table.get_by_id(pk=device_id)
+            device.__data__.update(data)  # Update the in-memory data dictionary
+            device.save()
+
+            return web.json_response(device.__data__, status=200)
+        except DoesNotExist:
+            return web.HTTPNotFound(text=f'Device with id {device_id} not found')
+        except IntegrityError as e:
+            return web.json_response({'errors': str(e)}, status=400)
+        except ValidationError as e:
+            return web.json_response({'errors': e.errors()}, status=400)
         except Exception as exp:
             logger.exception(f"An unexpected error occurred: {exp}")
             return web.json_response({'error': 'Internal server error'}, status=500)

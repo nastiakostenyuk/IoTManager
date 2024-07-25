@@ -11,9 +11,10 @@ def create_app() -> web.Application:
     app = web.Application()
     app.add_routes([
         web.get("/api/devices", device_handler.get_all),
-        web.get("/api/devices/{id}/", device_handler.get_by_id),
+        web.get("/api/devices/{id}", device_handler.get_by_id),
         web.post("/api/devices", device_handler.create),
-        web.post("/api/devices/{id}/", device_handler.delete)
+        web.delete("/api/devices/{id}", device_handler.delete),
+        web.put("/api/devices/{id}", device_handler.update),
     ])
     return app
 
