@@ -9,4 +9,5 @@ load_dotenv()
 postgres_database = PostgresqlDatabase(database=os.getenv("POSTGRES_DB"),
                                        user=os.getenv("POSTGRES_USER"),
                                        password=os.getenv("POSTGRES_PASSWORD"),
-                                       host=os.getenv("POSTGRES_HOST"))
+                                       host=os.getenv("POSTGRES_HOST"),
+                                       port=os.getenv("POSTGRES_PORT"))

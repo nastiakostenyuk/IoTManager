@@ -15,7 +15,7 @@ class DeviceHandler:
     async def get_all(self, request: Request) -> Response:
         """Get all devices."""
         devices = self.device_table.select()
-        return web.json_response({'devices': [device.to_dict() for device in devices]})
+        return web.json_response({'devices': [device.__data__ for device in devices]})
 
     async def get_by_id(self, request: Request) -> Response:
         """Get device by id."""
