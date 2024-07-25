@@ -1,4 +1,5 @@
 from aiohttp import web
+from loguru import logger
 
 from handlers import DeviceHandler
 from settings import postgres_database
@@ -20,5 +21,11 @@ def create_app() -> web.Application:
 
 
 if __name__ == "__main__":
-    app = create_app()
-    web.run_app(app)
+    try:
+        logger.info(f"Run app")
+        app = create_app()
+        web.run_app(app)
+    except KeyboardInterrupt:
+        logger.info("Server stopped manually.")
+    except Exception as e:
+        logger.exception(e)
